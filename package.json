@@ -1,0 +1,75 @@
+{
+  "name": "@vorionsys/agent-sdk",
+  "version": "0.1.1",
+  "description": "TypeScript SDK for connecting AI agents to Aurais Mission Control",
+  "keywords": [
+    "aurais",
+    "vorion",
+    "ai-agent",
+    "mission-control",
+    "websocket",
+    "sdk",
+    "governance"
+  ],
+  "license": "Apache-2.0",
+  "author": "Vorion LLC",
+  "homepage": "https://vorion.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vorionsys/agent-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vorionsys/agent-sdk/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "ws": "^8.18.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@types/node": "^22.10.5",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "changeset:version": "changeset version && npm install --package-lock-only",
+    "changeset:release": "changeset publish"
+  }
+}

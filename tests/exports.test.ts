@@ -20,39 +20,39 @@ describe("AuraisAgent", () => {
     });
 
     it("constructs with valid apiKey", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent).toBeInstanceOf(AuraisAgent);
     });
 
     it("defaults to disconnected state", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent.getConnectionState()).toBe("disconnected");
     });
 
     it("defaults to IDLE status", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent.getStatus()).toBe("IDLE");
     });
 
     it("isConnected returns false initially", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent.isConnected()).toBe(false);
     });
 
     it("getAgentId returns null before connection", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent.getAgentId()).toBeNull();
     });
 
     it("getStructuredId returns null before connection", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       expect(agent.getStructuredId()).toBeNull();
     });
   });
 
   describe("disconnect", () => {
     it("emits disconnected event", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       let emitted = false;
       agent.on("disconnected", () => {
         emitted = true;
@@ -62,7 +62,7 @@ describe("AuraisAgent", () => {
     });
 
     it("sets connection state to disconnected", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       agent.disconnect();
       expect(agent.getConnectionState()).toBe("disconnected");
     });
@@ -70,7 +70,7 @@ describe("AuraisAgent", () => {
 
   describe("event emitter", () => {
     it("supports on/emit for status:changed", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       let oldStatus: string | undefined;
       let newStatus: string | undefined;
 
@@ -88,7 +88,7 @@ describe("AuraisAgent", () => {
     });
 
     it("supports on/emit for error", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       let caughtError: Error | undefined;
 
       agent.on("error", (err) => {
@@ -101,7 +101,7 @@ describe("AuraisAgent", () => {
     });
 
     it("supports removeAllListeners", () => {
-      const agent = new AuraisAgent({ apiKey: "test-key" });
+      const agent = new AuraisAgent({ apiKey: "test-key", serverUrl: "wss://agents.example.com/ws" });
       let count = 0;
 
       agent.on("connected", () => {

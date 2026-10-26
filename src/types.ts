@@ -20,8 +20,12 @@ export interface AuraisAgentConfig {
   capabilities?: AgentCapability[];
   /** Agent skills (e.g., 'web-dev', 'api-integration') */
   skills?: string[];
-  /** WebSocket server URL (defaults to wss://api.aurais.ai/ws) */
-  serverUrl?: string;
+  /**
+   * WebSocket server URL. Required: the SDK has no default host, so your API
+   * key only goes where you point it. Must be wss (plain ws is allowed for
+   * localhost only).
+   */
+  serverUrl: string;
   /** Enable auto-reconnection (default: true) */
   autoReconnect?: boolean;
   /** Maximum reconnection attempts (default: 10) */

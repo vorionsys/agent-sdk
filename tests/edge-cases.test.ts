@@ -93,6 +93,7 @@ function getLatestWs(): any {
 function createAgent(overrides: Record<string, unknown> = {}): AuraisAgent {
   return new AuraisAgent({
     apiKey: "test-key-123",
+    serverUrl: "wss://agents.example.com/ws",
     heartbeatInterval: 60000,
     connectionTimeout: 5000,
     autoReconnect: false,

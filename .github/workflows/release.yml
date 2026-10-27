@@ -20,9 +20,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Update npm (OIDC trusted publishing requires npm >= 11.5.1)
-        run: npm install -g npm@latest
+          node-version: 24
+      # OIDC trusted publishing needs npm >= 11.5.1. Pin the major: npm@latest
+      # moved to npm 12, which refuses to install on Node 20 and broke this job.
+      - name: Update npm
+        run: npm install -g npm@11
       - run: npm ci
       - run: npm run build
       - run: npm audit signatures

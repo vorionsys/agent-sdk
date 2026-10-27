@@ -91,6 +91,7 @@ function getLatestWs(): any {
 function createAgent(overrides: Record<string, unknown> = {}): AuraisAgent {
   return new AuraisAgent({
     apiKey: "test-key-123",
+    serverUrl: "wss://agents.example.com/ws",
     heartbeatInterval: 60000,
     connectionTimeout: 5000,
     autoReconnect: false,
@@ -140,17 +141,41 @@ describe("AuraisAgent validation", () => {
 
     it("throws on whitespace-only apiKey that is falsy", () => {
       // Empty string is falsy; whitespace is truthy in JS, so it should construct
-      const agent = new AuraisAgent({ apiKey: "   " });
+      const agent = new AuraisAgent({
+        apiKey: "   ",
+        serverUrl: "wss://agents.example.com/ws",
+      });
       expect(agent).toBeInstanceOf(AuraisAgent);
     });
 
-    it("applies default serverUrl when not provided", () => {
-      const agent = createAgent();
-      // We verify by connecting — the WebSocket constructor receives the URL
-      const connectPromise = agent.connect();
-      const ws = getLatestWs();
-      ws.emit("open");
-      connectPromise.then(() => agent.disconnect());
+    it("throws when serverUrl is not provided", () => {
+      expect(
+        () => new AuraisAgent({ apiKey: "test-key-123" } as never),
+      ).toThrow("serverUrl is required");
+    });
+
+    it("rejects a serverUrl that is not an absolute URL", () => {
+      expect(() => createAgent({ serverUrl: "agents.example.com/ws" })).toThrow(
+        "serverUrl must be an absolute URL",
+      );
+    });
+
+    it("rejects plain ws for a remote host", () => {
+      expect(() => createAgent({ serverUrl: "ws://agents.example.com/ws" })).toThrow(
+        "serverUrl must use wss",
+      );
+    });
+
+    it("rejects non-WebSocket schemes", () => {
+      expect(() => createAgent({ serverUrl: "https://agents.example.com/ws" })).toThrow(
+        "serverUrl must use wss",
+      );
+    });
+
+    it("allows plain ws for localhost", () => {
+      for (const serverUrl of ["ws://localhost:8080/ws", "ws://127.0.0.1:8080/ws"]) {
+        expect(createAgent({ serverUrl })).toBeInstanceOf(AuraisAgent);
+      }
     });
 
     it("accepts custom serverUrl", async () => {
@@ -162,7 +187,7 @@ describe("AuraisAgent validation", () => {
     });
 
     it('defaults capabilities to ["execute"] when not specified', async () => {
-      const agent = new AuraisAgent({ apiKey: "test-key-123" });
+      const agent = new AuraisAgent({ apiKey: "test-key-123", serverUrl: "wss://agents.example.com/ws" });
       const connectPromise = agent.connect();
       const ws = getLatestWs();
       ws.emit("open");
@@ -174,7 +199,7 @@ describe("AuraisAgent validation", () => {
     });
 
     it("defaults skills to empty array when not specified", async () => {
-      const agent = new AuraisAgent({ apiKey: "test-key-123" });
+      const agent = new AuraisAgent({ apiKey: "test-key-123", serverUrl: "wss://agents.example.com/ws" });
       const connectPromise = agent.connect();
       const ws = getLatestWs();
       ws.emit("open");
@@ -188,6 +213,7 @@ describe("AuraisAgent validation", () => {
     it("defaults autoReconnect to true", async () => {
       const agent = new AuraisAgent({
         apiKey: "test-key-123",
+        serverUrl: "wss://agents.example.com/ws",
         maxReconnectAttempts: 1,
         reconnectBaseDelay: 100,
       });
@@ -203,7 +229,7 @@ describe("AuraisAgent validation", () => {
     });
 
     it("defaults metadata to empty object when not specified", async () => {
-      const agent = new AuraisAgent({ apiKey: "test-key-123" });
+      const agent = new AuraisAgent({ apiKey: "test-key-123", serverUrl: "wss://agents.example.com/ws" });
       const connectPromise = agent.connect();
       const ws = getLatestWs();
       ws.emit("open");

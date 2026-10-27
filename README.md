@@ -25,6 +25,7 @@ import { AuraisAgent } from '@vorionsys/agent-sdk';
 
 const agent = new AuraisAgent({
   apiKey: process.env.AURAIS_API_KEY!,
+  serverUrl: 'wss://your-aurais-server.example/ws', // required: no default server
   capabilities: ['execute', 'external'],
   skills: ['web-dev', 'data-analysis'],
 });
@@ -104,6 +105,7 @@ agent.on('decision:required', (request) => {
 ```typescript
 const agent = new AuraisAgent({
   apiKey: process.env.AURAIS_API_KEY!,
+  serverUrl: 'wss://your-aurais-server.example/ws',
   autoReconnect: true,
   maxReconnectAttempts: 10,
 });
@@ -149,7 +151,7 @@ agent.disconnect();
 | `apiKey`               | (required)                 | API key for authentication             |
 | `capabilities`         | `['execute']`              | Agent capabilities                     |
 | `skills`               | `[]`                       | Agent skills list                      |
-| `serverUrl`            | `wss://api.aurais.ai/ws`  | WebSocket server URL                   |
+| `serverUrl`            | (required)                 | WebSocket server URL; `wss` (plain `ws` for localhost only) |
 | `autoReconnect`        | `true`                     | Enable auto-reconnection               |
 | `maxReconnectAttempts`  | `10`                      | Max reconnection attempts              |
 | `reconnectBaseDelay`   | `1000`                     | Base delay for reconnect backoff (ms)  |
@@ -247,11 +249,15 @@ import { AuraisAgent } from '@vorionsys/agent-sdk';
 import { createVorion } from '@vorionsys/sdk';
 
 // Real-time connection for task assignment
-const agent = new AuraisAgent({ apiKey: process.env.AURAIS_API_KEY! });
+const agent = new AuraisAgent({
+  apiKey: process.env.AURAIS_API_KEY!,
+  serverUrl: 'wss://your-aurais-server.example/ws',
+});
 await agent.connect();
 
-// REST client for governance operations
-const vorion = createVorion({ mode: 'remote', apiUrl: 'https://api.cognigate.dev' });
+// REST client for governance operations. The hosted Cognigate API is paused:
+// point apiUrl at a Cognigate instance you run.
+const vorion = createVorion({ mode: 'remote', apiUrl: 'https://your-cognigate-host.example' });
 const myAgent = vorion.agent('my-agent', { capabilities: ['read', 'write'] });
 
 agent.on('task:assigned', async (task) => {

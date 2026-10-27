@@ -37,12 +37,33 @@ import {
 // Constants
 // ============================================================================
 
-const DEFAULT_SERVER_URL = "wss://api.aurais.ai/ws";
 const DEFAULT_HEARTBEAT_INTERVAL = 30000; // 30 seconds
 const DEFAULT_CONNECTION_TIMEOUT = 10000; // 10 seconds
 const DEFAULT_RECONNECT_BASE_DELAY = 1000; // 1 second
 const DEFAULT_RECONNECT_MAX_DELAY = 30000; // 30 seconds
 const DEFAULT_MAX_RECONNECT_ATTEMPTS = 10;
+
+/**
+ * Check the server URL the agent connects to (the API key travels with the
+ * connection). There is no default host: a fallback would send keys somewhere
+ * the caller never chose.
+ */
+function validateServerUrl(serverUrl: string | undefined): string {
+  if (!serverUrl) {
+    throw new Error("serverUrl is required: the SDK has no default server");
+  }
+  let url: URL;
+  try {
+    url = new URL(serverUrl);
+  } catch {
+    throw new Error(`serverUrl must be an absolute URL, got "${serverUrl}"`);
+  }
+  const local = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  if (url.protocol !== "wss:" && !(url.protocol === "ws:" && local)) {
+    throw new Error("serverUrl must use wss (ws is allowed for localhost only)");
+  }
+  return serverUrl;
+}
 
 // ============================================================================
 // AuraisAgent Class
@@ -86,7 +107,7 @@ export class AuraisAgent extends EventEmitter<AgentEvents> {
       apiKey: config.apiKey,
       capabilities: config.capabilities ?? ["execute"],
       skills: config.skills ?? [],
-      serverUrl: config.serverUrl ?? DEFAULT_SERVER_URL,
+      serverUrl: validateServerUrl(config.serverUrl),
       autoReconnect: config.autoReconnect ?? true,
       maxReconnectAttempts:
         config.maxReconnectAttempts ?? DEFAULT_MAX_RECONNECT_ATTEMPTS,

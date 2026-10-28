@@ -1,6 +1,6 @@
 {
   "name": "@vorionsys/agent-sdk",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "TypeScript SDK for connecting AI agents to Aurais Mission Control",
   "keywords": [
     "aurais",
